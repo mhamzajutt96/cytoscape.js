@@ -73,7 +73,7 @@ For now, I did a manual edit to set the rows into a JSON array.
 ![](images/data_grants_to_roles.png)
 
 #### Graphing
-This being a prototype, I've used the default settings and configuration of Dagre-D3 to layout the graph. You can view a [demo](roles.html).
+This being a prototype, I've used the default settings and configuration of Dagre-D3 to layout the graph. You can view a [demo](roles_with_dagre.html).
 
 ![](images/roles_hierarchy_with_privileges.png)
 
