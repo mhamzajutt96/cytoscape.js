@@ -48,7 +48,7 @@
             "border-color": "black",
             "border-opacity": "1",
             "border-width": "1px",
-            shape: "hexagon"
+            shape: "octagon"
           }
         },
         {
@@ -70,48 +70,60 @@
       }
     }));
 
-    $.get(data_file_url, function (data) {
-      for ( let i = 0; i < data.length; i++) {
-        if (cy.filter(`node[id = "${data[i].GRANTEE_NAME}"]`).length > 0) {
-          continue
-        }
-        cy.add({
-          group: 'nodes',
-          data: {
-            id: data[i].GRANTEE_NAME
-          },
-          position: { x: i * 100, y: i * 100 }
-        });
-      }
-    })
+    cy.add({ group: 'nodes', data: { id: 'Roles' } });
+    cy.add({ group: 'nodes', data: { id: 'Users' } });
 
-    $.get(data_file_url, function (data) {
-      for ( let i = 0; i < data.length; i++) {
-        if (cy.filter(`node[id = "${data[i].NAME}"]`).length > 0) {
-          continue
-        }
-        cy.add({
-          group: 'nodes',
-          data: {
-            id: data[i].NAME,
-          },
-          position: { x: i * 100, y: i * 100 }
-        });
-      }
-    })
+    cy.add({ group: 'nodes', data: { id: 'n1', parent: 'Roles' }})
+    cy.add({ group: 'nodes', data: { id: 'n2', parent: 'Roles' }})
+    cy.add({ group: 'nodes', data: { id: 'n3', parent: 'Roles' }})
 
-    $.get(data_file_url, function (data) {
-      for ( let i = 0; i < data.length; i++) {
-        cy.add({
-          group: 'edges',
-          data: {
-            source: data[i].NAME,
-            target: data[i].GRANTEE_NAME,
-            privilege: data[i].PRIVILEGE
-          }
-        });
-      }
-    })
+    cy.add({ group: 'edges', data: { id: 'e1', source: 'n1', target: 'n2' }})
+    cy.add({ group: 'edges', data: { id: 'e2', source: 'n3', target: 'n2' }})
+
+    // $.get(data_file_url, function (data) {
+    //   for ( let i = 0; i < data.length; i++) {
+    //     if (cy.filter(`node[id = "${data[i].GRANTEE_NAME}"]`).length > 0) {
+    //       continue
+    //     }
+    //     cy.add({
+    //       group: 'nodes',
+    //       data: {
+    //         id: data[i].GRANTEE_NAME,
+    //         // parent: 'Roles'
+    //       },
+    //       position: { x: i * 100, y: i * 100 }
+    //     });
+    //   }
+    // })
+    //
+    // $.get(data_file_url, function (data) {
+    //   for ( let i = 0; i < data.length; i++) {
+    //     if (cy.filter(`node[id = "${data[i].NAME}"]`).length > 0) {
+    //       continue
+    //     }
+    //     cy.add({
+    //       group: 'nodes',
+    //       data: {
+    //         id: data[i].NAME,
+    //         // parent: 'Users'
+    //       },
+    //       position: { x: i * 100, y: i * 100 }
+    //     });
+    //   }
+    // })
+    //
+    // $.get(data_file_url, function (data) {
+    //   for ( let i = 0; i < data.length; i++) {
+    //     cy.add({
+    //       group: 'edges',
+    //       data: {
+    //         source: data[i].NAME,
+    //         target: data[i].GRANTEE_NAME,
+    //         privilege: data[i].PRIVILEGE
+    //       }
+    //     });
+    //   }
+    // })
 
     cy.unbind('click')
     cy.bind('click', 'node', function(event) {
@@ -119,6 +131,8 @@
       let connected = event.target
       connected = connected.union(event.target.predecessors())
       connected = connected.union(connected.successors())
+
+      console.log(connected)
       // in one line:
       // event.target.union(event.target.predecessors().union(event.target.successors()))
 
