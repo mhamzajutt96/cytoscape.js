@@ -47,13 +47,19 @@
             width: "250px",
             "border-color": "black",
             "border-opacity": "1",
-            "border-width": "1px"
+            "border-width": "1px",
+            shape: "hexagon"
           }
         },
         {
           selector: "edge",
           css: {
-            "target-arrow-shape": "triangle"
+            content: "data(privilege)",
+            width: 3,
+            "line-color": "#cef9b6",
+            "target-arrow-color": "#f50909",
+            "target-arrow-shape": "triangle",
+            "curve-style": "bezier"
           }
         }
       ],
@@ -71,7 +77,9 @@
         }
         cy.add({
           group: 'nodes',
-          data: {id: data[i].GRANTEE_NAME},
+          data: {
+            id: data[i].GRANTEE_NAME
+          },
           position: { x: i * 100, y: i * 100 }
         });
       }
@@ -79,13 +87,28 @@
 
     $.get(data_file_url, function (data) {
       for ( let i = 0; i < data.length; i++) {
-        if (cy.filter(`node[id = "${data[i].TABLE_CATALOG}"]`).length > 0) {
+        if (cy.filter(`node[id = "${data[i].NAME}"]`).length > 0) {
           continue
         }
         cy.add({
           group: 'nodes',
-          data: {id: data[i].TABLE_CATALOG},
+          data: {
+            id: data[i].NAME,
+          },
           position: { x: i * 100, y: i * 100 }
+        });
+      }
+    })
+
+    $.get(data_file_url, function (data) {
+      for ( let i = 0; i < data.length; i++) {
+        cy.add({
+          group: 'edges',
+          data: {
+            source: data[i].NAME,
+            target: data[i].GRANTEE_NAME,
+            privilege: data[i].PRIVILEGE
+          }
         });
       }
     })
