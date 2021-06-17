@@ -109,11 +109,14 @@
   let arrayOfParentNodes = ['DATABASE', 'ROLE', 'SCHEMA', 'WAREHOUSE']
 
   // Looping through parent Nodes and calling add nodes function.
-  arrayOfParentNodes.forEach(function (node) {
+  arrayOfParentNodes.forEach(function (node, index) {
     addNodes({
       grantedOnAttribute: node,
       parentNode: node + 'S'
     })
+    if ((arrayOfParentNodes.length -1) === index) {
+      // Need to remove those nodes that don't have any edges.
+    }
   })
 
   // Adding all the respective nodes to the graph.
@@ -139,7 +142,10 @@
   // Adding all the respective Edges
   $.get(data_file_url, function (data) {
     for ( let i = 0; i < data.length; i++) {
-      if(data[i].GRANTED_ON === ('DATABASE' || 'ROLE' || 'SCHEMA' || 'WAREHOUSE')) {
+      if(data[i].GRANTED_ON === 'DATABASE' || 'ROLE' || 'SCHEMA' || 'WAREHOUSE') {
+        if (cy.filter(`node[id = "${data[i].NAME}"]`).length === 0) {
+          continue
+        }
         cy.add({
           group: 'edges',
           data: {
@@ -151,6 +157,8 @@
       }
     }
   })
+
+
 
   cy.bind('click', 'node', function (event) {
     let selectedNode = event.target
