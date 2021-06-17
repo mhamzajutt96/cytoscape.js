@@ -92,21 +92,21 @@
   }));
 
   // Adding parent Nodes.
-  cy.add({group: 'nodes', data: {id: 'ACCOUNTS'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'ACCOUNTS'}, style: {"text-valign": "top"}});
   cy.add({group: 'nodes', data: {id: 'DATABASES'}, style: {"text-valign": "top"}});
-  cy.add({group: 'nodes', data: {id: 'FILE FORMATS'}, style: {"text-valign": "top"}});
-  cy.add({group: 'nodes', data: {id: 'FUNCTIONS'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'FILE FORMATS'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'FUNCTIONS'}, style: {"text-valign": "top"}});
   cy.add({group: 'nodes', data: {id: 'ROLES'}, style: {"text-valign": "top"}});
   cy.add({group: 'nodes', data: {id: 'SCHEMAS'}, style: {"text-valign": "top"}});
-  cy.add({group: 'nodes', data: {id: 'STAGES'}, style: {"text-valign": "top"}});
-  cy.add({group: 'nodes', data: {id: 'TABLES'}, style: {"text-valign": "top"}});
-  cy.add({group: 'nodes', data: {id: 'USERS'}, style: {"text-valign": "top"}});
-  cy.add({group: 'nodes', data: {id: 'VIEWS'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'STAGES'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'TABLES'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'USERS'}, style: {"text-valign": "top"}});
+  // cy.add({group: 'nodes', data: {id: 'VIEWS'}, style: {"text-valign": "top"}});
   cy.add({group: 'nodes', data: {id: 'WAREHOUSES'}, style: {"text-valign": "top"}});
 
+  cy.add({ group: 'nodes', data: { id: 'ACCOUNTADMIN', parent: 'ROLES' }})
   // Creating Array of parent Nodes.
-  let arrayOfParentNodes = ['ACCOUNT', 'DATABASE', 'FILE FORMAT', 'FUNCTION',
-    'ROLE', 'SCHEMA', 'STAGE', 'TABLE', 'USER', 'VIEW', 'WAREHOUSE']
+  let arrayOfParentNodes = ['DATABASE', 'ROLE', 'SCHEMA', 'WAREHOUSE']
 
   // Looping through parent Nodes and calling add nodes function.
   arrayOfParentNodes.forEach(function (node) {
@@ -139,33 +139,35 @@
   // Adding all the respective Edges
   $.get(data_file_url, function (data) {
     for ( let i = 0; i < data.length; i++) {
-      cy.add({
-        group: 'edges',
-        data: {
-          source: data[i].NAME,
-          target: data[i].GRANTEE_NAME,
-          privilege: data[i].PRIVILEGE
-        }
-      });
+      if(data[i].GRANTED_ON === ('DATABASE' || 'ROLE' || 'SCHEMA' || 'WAREHOUSE')) {
+        cy.add({
+          group: 'edges',
+          data: {
+            source: data[i].NAME,
+            target: data[i].GRANTEE_NAME,
+            privilege: data[i].PRIVILEGE
+          }
+        });
+      }
     }
   })
 
-  // cy.bind('click', 'node', function (event) {
-  //   let selectedNode = event.target
-  //   let sourceNodesOfSelectedNodes = selectedNode.predecessors()
-  //   let targetNodesOfSelectedNodes = selectedNode.successors()
-  //   let parentsOfSourceNodes = sourceNodesOfSelectedNodes.parent()
-  //   let parentsOfTargetNodes = targetNodesOfSelectedNodes.parent()
-  //   let parentOfSelectedNode = selectedNode.parent()
-  //   let connectedNodes = selectedNode
-  //       .union(sourceNodesOfSelectedNodes)
-  //       .union(targetNodesOfSelectedNodes)
-  //       .union(parentsOfSourceNodes)
-  //       .union(parentsOfTargetNodes)
-  //       .union(parentOfSelectedNode)
-  //   let notConnectedNodes = cy.elements().not(connectedNodes)
-  //   cy.remove(notConnectedNodes)
-  // });
+  cy.bind('click', 'node', function (event) {
+    let selectedNode = event.target
+    let sourceNodesOfSelectedNodes = selectedNode.predecessors()
+    let targetNodesOfSelectedNodes = selectedNode.successors()
+    let parentsOfSourceNodes = sourceNodesOfSelectedNodes.parent()
+    let parentsOfTargetNodes = targetNodesOfSelectedNodes.parent()
+    let parentOfSelectedNode = selectedNode.parent()
+    let connectedNodes = selectedNode
+        .union(sourceNodesOfSelectedNodes)
+        .union(targetNodesOfSelectedNodes)
+        .union(parentsOfSourceNodes)
+        .union(parentsOfTargetNodes)
+        .union(parentOfSelectedNode)
+    let notConnectedNodes = cy.elements().not(connectedNodes)
+    cy.remove(notConnectedNodes)
+  });
 
   $('#search-field-graph').on('change', function (){
     console.log($(this).val())
