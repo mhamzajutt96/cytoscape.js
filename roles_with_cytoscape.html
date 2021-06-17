@@ -83,11 +83,34 @@
           "target-arrow-shape": "triangle",
           "curve-style": "bezier"
         }
+      },
+      {
+        selector: 'node.highlight',
+        style: {
+          'border-color': '#f50909',
+          'border-width': '3px',
+          height: "150px",
+          width: "300px",
+          "border-opacity": "2",
+          shape: "hexagon"
+        }
+      },
+      {
+        selector: 'node.semitransp',
+        style:{ 'opacity': '0.5' }
+      },
+      {
+        selector: 'edge.highlight',
+        style: { 'mid-target-arrow-color': '#FFF' }
+      },
+      {
+        selector: 'edge.semitransp',
+        style:{ 'opacity': '0.2' }
       }
     ],
 
     layout: {
-      name: 'dagre',
+      name: 'cose',
     }
   }));
 
@@ -158,8 +181,6 @@
     }
   })
 
-
-
   cy.bind('click', 'node', function (event) {
     let selectedNode = event.target
     let sourceNodesOfSelectedNodes = selectedNode.predecessors()
@@ -178,7 +199,11 @@
   });
 
   $('#search-field-graph').on('change', function (){
-    console.log($(this).val())
+    let searchAbleText = $(this).val()
+    let matchingNode = cy.filter(`node[ id = "${searchAbleText}" ]`)
+    console.log(cy.elements().difference(matchingNode.outgoers()).not(matchingNode))
+    cy.elements().difference(matchingNode.outgoers()).not(matchingNode).addClass('semitransp');
+    matchingNode.addClass('highlight').outgoers().addClass('highlight');
   })
 
 </script>
