@@ -201,7 +201,6 @@
   $('#search-field-graph').on('change', function (){
     let searchAbleText = $(this).val()
     let matchingNode = cy.filter(`node[ id = "${searchAbleText}" ]`)
-    console.log(cy.elements().difference(matchingNode.outgoers()).not(matchingNode))
     cy.elements().difference(matchingNode.outgoers()).not(matchingNode).addClass('semitransp');
     matchingNode.addClass('highlight').outgoers().addClass('highlight');
   })
